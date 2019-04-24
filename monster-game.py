@@ -16,7 +16,6 @@ class Monster(Block):
 def main():
     width = 512
     height = 480
-    blue_color = (97, 159, 182)
 
     pygame.init()
     screen = pygame.display.set_mode((width, height))
@@ -75,7 +74,6 @@ def main():
             monster.kill()
 
         # Draw background
-        screen.fill(blue_color)
         screen.blit(background_image, [0, 0])
 
         # Game display
