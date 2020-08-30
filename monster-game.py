@@ -1,6 +1,8 @@
 width = 512
 height = 480
+
 import pygame
+import random
 
 from pygame.locals import (
     K_UP,
@@ -12,47 +14,28 @@ from pygame.locals import (
     QUIT,
 )
 
-
 class Block(pygame.sprite.Sprite):
     def __init__(self, image, pos):
-        super(Block, self).__init__()
+        pygame.sprite.Sprite.__init__(self)
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.center = pos
 
 class Hero(Block):
-    def update(self, pressed_keys):
-        if pressed_keys[K_UP]:
-            self.rect.move_ip(0, -5)
-        if pressed_keys[K_DOWN]:
-            self.rect.move_ip(0, 5)
-        if pressed_keys[K_LEFT]:
-            self.rect.move_ip(-5, 0)
-        if pressed_keys[K_RIGHT]:
-            self.rect.move_ip(5, 0)    
+  def update(self, pressed_keys):
+    
 
-        if self.rect.left < 0:
-            self.rect.left = 0
-        if self.rect.right > width:
-            self.rect.right = width
-        if self.rect.top <= 0:
-            self.rect.top = 0
-        if self.rect.bottom >= height:
-            self.rect.bottom = height  
+    if self.rect.left < 0:
+        self.rect.left = 0
+    if self.rect.right > width:
+        self.rect.right = width
+    if self.rect.top <= 0:
+        self.rect.top = 0
+    if self.rect.bottom >= height:
+        self.rect.bottom = height  
 
 class Monster(Block):
-    def __init__(self):
-        super(Block, self).__init__()
-        self.surf = pygame.Surface((20, 10))
-        self.surf.fill((255, 255, 255))
-        self.rect = self.surf.get_rect(
-            center=(
-                random.randint(width + 20, width + 100),
-                random.randint(0, height),
-            )
-        )
-        self.speed = random.randint(5, 20)
-    
+    pass
 
 def main():
 
@@ -94,13 +77,13 @@ def main():
         pressed_keys= pygame.key.get_pressed()
         player.update(pressed_keys)
 
-        # for i in range(2):
-        #     if key[player.move[i]]:
-        #         player.rect.x += player.vx * [-1, 1][i]
+        for i in range(2):
+            if pressed_keys[player.move[i]]:
+                player.rect.x += player.vx * [-1, 1][i]
 
-        # for i in range(2):
-        #     if key[player.move[2:4][i]]:
-        #         player.rect.y += player.vy * [-1, 1][i]
+        for i in range(2):
+            if pressed_keys[player.move[2:4][i]]:
+                player.rect.y += player.vy * [-1, 1][i]
 
         # first parameter takes a single sprite
         # second parameter takes sprite groups
