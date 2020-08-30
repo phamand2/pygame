@@ -17,6 +17,7 @@ from pygame.locals import (
 
 width = 600
 height = 550
+WHITE = (255,255,255)
 # Define a player object by extending pygame.sprite.Sprite
 # The surface drawn on the screen is now an attribute of 'player
 class Player(pygame.sprite.Sprite):
@@ -60,7 +61,7 @@ class Enemy(pygame.sprite.Sprite):
             )
         )
     # Move the sprite based on speed
-        self.speed = random.randint(4, 4)
+        self.speed = random.randint(6, 6)
     # Remove the sprite when it passes the left edge of the screen
     def update(self):
         self.rect.move_ip(-self.speed, 0)    
@@ -125,9 +126,14 @@ def main():
 
             # Event handling
             if event.type == KEYDOWN:
-                # If the Esc key is pressed, then exit the main loop
-                if event.key == K_ESCAPE:
-                    stop_game = True
+                if event.key == K_SPACE:
+                    collision_sound.play()
+                    bullet = Bullet()
+                    # Set the bullet cordinates to match with the player.
+                    bullet.rect.x = player.rect.x + bullet.rect.width/2
+                    bullet.rect.y = player.rect.y  + bullet.rect.height/2
+                    bullet_group.add(bullet)
+                    all_sprites.add(bullet)
             # Check for QUIT event. If QUIT, then set running to True
             elif event.type == QUIT:
                 stop_game = True
@@ -137,16 +143,8 @@ def main():
                 new_enemy = Enemy()
                 enemies.add(new_enemy)
                 all_sprites.add(new_enemy)
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                collision_sound.play()
-                bullet = Bullet()
-                # Set the bullet cordinates to match with the player.
-                bullet.rect.x = player.rect.x
-                bullet.rect.y = player.rect.y
-                bullet_group.add(bullet)
-                all_sprites.add(bullet)
-
             
+
         for bullet in bullet_group:
             enemy_hit_list = pygame.sprite.spritecollide(bullet, enemies, True)
             for bullet in enemy_hit_list:
@@ -154,7 +152,11 @@ def main():
                 bullet_group.remove(bullet)
                 all_sprites.remove(bullet)
                 score += 1
-                print(score)
+
+        # Create the score card
+        font = pygame.font.Font(None, 36)
+        text = font.render("Score: " + str(score), True, WHITE)  
+        textpos = text.get_rect(centerx=screen.get_width()/12)     
 
 
         # Get the set of keys pressed and check for user input
@@ -165,11 +167,13 @@ def main():
 
         # Update enemy position
         enemies.update()
+        # Update bullet
         bullet_group.update()
         
 
         # Draw background
         screen.blit(background_image, [0, 0])
+        screen.blit(text, textpos)
 
         # Draw all sprites
         for entity in all_sprites:
@@ -183,7 +187,7 @@ def main():
             stop_game = True
 
 
-        clock.tick(120)
+        clock.tick(60)
         pygame.display.update()
 
     pygame.quit()
