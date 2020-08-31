@@ -1,5 +1,6 @@
 import pygame
 import random
+import pygame_menu
 
 from pygame.locals import (
     RLEACCEL,
@@ -18,6 +19,8 @@ from pygame.locals import (
 width = 600
 height = 550
 WHITE = (255,255,255)
+
+
 # Define a player object by extending pygame.sprite.Sprite
 # The surface drawn on the screen is now an attribute of 'player
 class Player(pygame.sprite.Sprite):
@@ -92,8 +95,10 @@ def main():
     pygame.display.set_caption("Andrew's First Game")
     clock = pygame.time.Clock()
 
-    # Keep track of score in the console
+    # Keep track of score
     score = 0
+
+    
 
     background_image = pygame.image.load('images/sky.png').convert_alpha()
     #Heartbeat by Snowflake (c) copyright 2016 Licensed under a Creative Commons Attribution Noncommercial  (3.0) license. http://dig.ccmixter.org/files/snowflake/53740 Ft: Scomber, George Ellinas, Vidian, Patronski#
@@ -101,7 +106,7 @@ def main():
     # Keep the song playing after it ends
     pygame.mixer.music.play(loops=-1)
 
-    collision_sound = pygame.mixer.Sound('sounds/Explosion+1.wav')
+    bullet_sound = pygame.mixer.Sound('sounds/Explosion+1.wav')
 
 
     # Create a custom event for adding new enemy
@@ -127,7 +132,7 @@ def main():
             # Event handling
             if event.type == KEYDOWN:
                 if event.key == K_SPACE:
-                    collision_sound.play()
+                    bullet_sound.play()
                     bullet = Bullet()
                     # Set the bullet cordinates to match with the player.
                     bullet.rect.x = player.rect.x + bullet.rect.width/2
@@ -139,7 +144,7 @@ def main():
                 stop_game = True
             # Add a new enemy
             elif event.type == ADDENEMY:
-                # Create the new enemy and addit to to sprite groups
+                # Create the new enemy and add it to to sprite groups
                 new_enemy = Enemy()
                 enemies.add(new_enemy)
                 all_sprites.add(new_enemy)
@@ -148,7 +153,6 @@ def main():
         for bullet in bullet_group:
             enemy_hit_list = pygame.sprite.spritecollide(bullet, enemies, True)
             for bullet in enemy_hit_list:
-                collision_sound.play()
                 bullet_group.remove(bullet)
                 all_sprites.remove(bullet)
                 score += 1
@@ -182,7 +186,6 @@ def main():
         # Check if any enemies have collided with the player
         if pygame.sprite.spritecollideany(player, enemies):
             # If so, then remove the player and stop the loop
-            collision_sound.play()
             player.kill()
             stop_game = True
 
